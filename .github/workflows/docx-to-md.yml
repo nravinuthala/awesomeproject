@@ -1,56 +1,56 @@
+
 name: Convert DOCX to Markdown
 
 on:
   push:
     paths:
-      - '**/*.docx'   # Trigger only when .docx files are pushed
+      - '**/*.docx'
 
 jobs:
   convert-docx:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      # 3. Install dependencies
       - name: Install dependencies
         run: |
           pip install pypandoc
 
-      # 4. Download Pandoc
       - name: Install Pandoc
         run: |
           python -c "import pypandoc; pypandoc.download_pandoc()"
 
-      # 5. Convert DOCX to Markdown with media extraction
       - name: Convert DOCX to Markdown
         run: |
-          for file in $(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '.docx$'); do
+          changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '.docx$' || true)
+          if [ -z "$changed_files" ]; then
+            echo "No DOCX files changed. Skipping conversion."
+            exit 0
+          fi
+          for file in $changed_files; do
             base=$(basename "$file" .docx)
-            python - <<EOF
+            python -c "
 import pypandoc
 pypandoc.convert_file(
-    "$file",
-    "gfm",
-    outputfile=f"{base}.md",
-    extra_args=["--extract-media=./media"]
+    '$file',
+    'gfm',
+    outputfile=f'{base}.md',
+    extra_args=['--extract-media=./media']
 )
-EOF
+"
           done
 
-      # 6. Commit and push converted Markdown and media folder
       - name: Commit converted files
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git add *.md media/
-          git commit -m "Auto-converted DOCX to Markdown with images"
+          git commit -m "Auto-converted DOCX to Markdown with images" || echo "No changes to commit"
           git push

@@ -1,0 +1,49 @@
+
+name: Convert DOCX to Markdown
+
+on:
+  push:
+    paths:
+      - '**/*.docx'   # Trigger only when .docx files are pushed
+
+jobs:
+  convert-docx:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install pypandoc
+
+      # 4. Download Pandoc (if needed)
+      - name: Install Pandoc
+        run: |
+          python -c "import pypandoc; pypandoc.download_pandoc()"
+
+      # 5. Find and convert DOCX files
+      - name: Convert DOCX to Markdown
+        run: |
+          for file in $(git diff --name-only HEAD~1 HEAD | grep '.docx$'); do
+            base=$(basename "$file" .docx)
+            python convert.py "$file" "${base}.md"
+          done
+
+      # 6. Commit and push converted Markdown files
+      - name: Commit converted files
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add *.md
+          git commit -m "Auto-converted DOCX to Markdown"
+          git push

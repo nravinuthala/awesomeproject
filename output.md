@@ -15,8 +15,8 @@ examples and explanations to illustrate the topic.
 
 Screenshot 1:
 
-<img src="media/image1.png" style="width:4in;height:2in" />
+<img src="./media/image1.png" style="width:4in;height:2in" />
 
 Screenshot 2:
 
-<img src="media/image2.png" style="width:4in;height:2in" />
+<img src="./media/image2.png" style="width:4in;height:2in" />

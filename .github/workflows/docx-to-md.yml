@@ -37,16 +37,16 @@ jobs:
           for file in $changed_files; do
             base=$(basename "$file" .docx)
             python - <<'EOF'
-import pypandoc, os
-file = os.environ['DOCX_FILE']
-base = os.environ['BASE_NAME']
-pypandoc.convert_file(
-    file,
-    'gfm',
-    outputfile=f'{base}.md',
-    extra_args=['--extract-media=./media']
-)
-EOF
+              import pypandoc, os
+              file = os.environ['DOCX_FILE']
+              base = os.environ['BASE_NAME']
+              pypandoc.convert_file(
+                file,
+                'gfm',
+                outputfile=f'{base}.md',
+                extra_args=['--extract-media=./media']
+              )
+            EOF
           done
         env:
           DOCX_FILE: $file

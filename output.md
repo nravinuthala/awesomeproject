@@ -8,18 +8,15 @@ document and provides some context for the reader.
 Here we provide more details about the content. This section includes
 examples and explanations to illustrate the topic.
 
-  -----------------------------------------------------------------------
-  ID                      Name                    Value
-  ----------------------- ----------------------- -----------------------
-  1                       Alpha                   100
-
-  2                       Beta                    200
-  -----------------------------------------------------------------------
+| ID  | Name  | Value |
+|-----|-------|-------|
+| 1   | Alpha | 100   |
+| 2   | Beta  | 200   |
 
 Screenshot 1:
 
-![](media/image1.png){width="4.0in" height="2.0in"}
+<img src="media/image1.png" style="width:4in;height:2in" />
 
 Screenshot 2:
 
-![](media/image2.png){width="4.0in" height="2.0in"}
+<img src="media/image2.png" style="width:4in;height:2in" />

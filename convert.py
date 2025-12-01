@@ -6,7 +6,7 @@ def convert_docx_to_md(input_file, output_file):
     """Convert DOCX to Markdown using pypandoc."""
     try:
         # Convert DOCX to Markdown and save to output file
-        pypandoc.convert_file(input_file, 'markdown', outputfile=output_file)
+        pypandoc.convert_file(input_file, 'gfm', outputfile=output_file)
         print(f"Conversion successful: {output_file}")
     except Exception as e:
         print(f"Error during conversion: {e}")

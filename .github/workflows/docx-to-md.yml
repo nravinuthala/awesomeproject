@@ -1,4 +1,3 @@
-
 name: Convert DOCX to Markdown
 
 on:
@@ -26,24 +25,32 @@ jobs:
         run: |
           pip install pypandoc
 
-      # 4. Download Pandoc (if needed)
+      # 4. Download Pandoc
       - name: Install Pandoc
         run: |
           python -c "import pypandoc; pypandoc.download_pandoc()"
 
-      # 5. Find and convert DOCX files
+      # 5. Convert DOCX to Markdown with media extraction
       - name: Convert DOCX to Markdown
         run: |
-          for file in $(git diff --name-only HEAD~1 HEAD | grep '.docx$'); do
+          for file in $(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '.docx$'); do
             base=$(basename "$file" .docx)
-            python convert.py "$file" "${base}.md"
+            python - <<EOF
+import pypandoc
+pypandoc.convert_file(
+    "$file",
+    "gfm",
+    outputfile=f"{base}.md",
+    extra_args=["--extract-media=./media"]
+)
+EOF
           done
 
-      # 6. Commit and push converted Markdown files
+      # 6. Commit and push converted Markdown and media folder
       - name: Commit converted files
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add *.md
-          git commit -m "Auto-converted DOCX to Markdown"
+          git add *.md media/
+          git commit -m "Auto-converted DOCX to Markdown with images"
           git push
